@@ -34,14 +34,14 @@ const Footer = () => {
 
       <TouchableOpacity
         style={styles.menuContainer}
-        onPress={() => navigation.navigate("account")}
+        onPress={() => navigation.navigate("Account")}
       >
         <AntDesign
-          style={[styles.icon, route.name === "account" && styles.active]}
+          style={[styles.icon, route.name === "Account" && styles.active]}
           name="user"
         />
         <Text
-          style={[styles.iconText, route.name === "account" && styles.active]}
+          style={[styles.iconText, route.name === "Account" && styles.active]}
         >
           Account
         </Text>
@@ -66,9 +66,6 @@ const styles = StyleSheet.create({
   iconText: {
     color: "#000000",
     fontSize: 10,
-  },
-  active: {
-    color: "blue",
   },
 });
 export default Footer;
