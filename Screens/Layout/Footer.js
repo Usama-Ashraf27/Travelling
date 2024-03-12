@@ -21,33 +21,17 @@ const Footer = () => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.menuContainer}
-        onPress={() => navigation.navigate("Cart")}
+        onPress={() => navigation.navigate("Post")}
       >
         <AntDesign
-          style={[styles.icon, route.name === "cart" && styles.active]}
-          name="shoppingcart"
+          style={[styles.icon, route.name === "post" && styles.active]}
+          name="edit"
         />
-        <Text style={[styles.iconText, route.name === "cart" && styles.active]}>
-          Cart
+        <Text style={[styles.iconText, route.name === "post" && styles.active]}>
+          Post
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.menuContainer}
-        onPress={() => navigation.navigate("notifications")}
-      >
-        <AntDesign
-          style={[styles.icon, route.name === "notifications" && styles.active]}
-          name="bells"
-        />
-        <Text
-          style={[
-            styles.iconText,
-            route.name === "notifications" && styles.active,
-          ]}
-        >
-          notification
-        </Text>
-      </TouchableOpacity>
+
       <TouchableOpacity
         style={styles.menuContainer}
         onPress={() => navigation.navigate("account")}
@@ -69,8 +53,7 @@ const Footer = () => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 10,
+    justifyContent: "space-around",
   },
   menuContainer: {
     alignItems: "center",
