@@ -1,6 +1,14 @@
 import React from "react";
-import { StyleSheet, Text, View, FlatList, Image } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { productData } from "./ProductsData";
+import { useNavigation } from "@react-navigation/native";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -8,12 +16,16 @@ import {
 import { Rating } from "react-native-ratings";
 
 const ProductsCard = () => {
+  const navigation = useNavigation();
+
   const renderProductItem = ({ item }) => (
-    <View style={styles.productItem}>
+    <TouchableOpacity
+      style={styles.productItem}
+      onPress={() => navigation.navigate("ProductDetail", { product: item })}
+    >
       <Image source={{ uri: item.image }} style={styles.image} />
       <Text style={styles.name}>{item.name}</Text>
       <Text numberOfLines={1}>{item.reviewAboutLocation}</Text>
-
       <Text numberOfLines={1}>{item.locationname}</Text>
       <Rating
         type="star"
@@ -22,7 +34,7 @@ const ProductsCard = () => {
         style={{ marginTop: 10 }}
         readonly
       />
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -55,8 +67,8 @@ const styles = StyleSheet.create({
     borderRadius: wp("4%"),
   },
   image: {
-    width: wp("39%"), // Adjust based on your preference
-    height: hp("20%"), // Adjust based on your preference
+    width: wp("39%"),
+    height: hp("20%"),
     borderRadius: wp("4%"),
     marginBottom: hp("1%"),
   },
