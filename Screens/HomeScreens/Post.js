@@ -15,11 +15,14 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import imageplace from "../../assets/imageplace.jpg";
 
 const Post = () => {
   const [name, setName] = useState("");
   const [locationReview, setLocationReview] = useState("");
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(
+    `https://i0.wp.com/thinkfirstcommunication.com/wp-content/uploads/2022/05/placeholder-1-1.png?w=1200&ssl=1`
+  );
   const [selectedLocation, setSelectedLocation] = useState(null);
 
   const handleLaunchImageLibrary = async () => {
@@ -64,7 +67,6 @@ const Post = () => {
   };
 
   const handleUpload = () => {
-    // Implement your upload logic here
     setTimeout(() => {
       alert("Upload complete!");
     }, 2000);
@@ -72,77 +74,80 @@ const Post = () => {
 
   return (
     <Layout style={styles.container}>
-      <Text style={styles.title}>Create Post</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Write a Name"
-        value={name}
-        onChangeText={setName}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Review about Locations"
-        value={locationReview}
-        onChangeText={setLocationReview}
-      />
-      <GooglePlacesAutocomplete
-        placeholder="Search Location"
-        minLength={2}
-        autoFocus={false}
-        returnKeyType={"default"}
-        fetchDetails={true}
-        onPress={handlePressLocation}
-        query={{
-          key: "AIzaSyDXoHO79vxypTv8xL4V10cf5kFpIYDO9Rk",
-          language: "en",
-        }}
-        styles={{
-          container: {
-            flex: 0,
-          },
-          textInputContainer: {
-            backgroundColor: "rgba(0,0,0,0)",
-            borderTopWidth: 0,
-            borderBottomWidth: 0,
-            paddingHorizontal: 34,
-            marginTop: 20,
-          },
-          textInput: {
-            marginLeft: 0,
-            marginRight: 0,
-            height: 38,
-            color: "#5d5d5d",
-            fontSize: 16,
-          },
-          predefinedPlacesDescription: {
-            color: "#1faadb",
-          },
-        }}
-      />
-      <AirbnbRating
-        type="custom"
-        ratingCount={5}
-        imageSize={wp("10%")}
-        onFinishRating={(rating) => console.log("Rating: ", rating)}
-        style={{ paddingVertical: hp("2%") }}
-      />
+      <View>
+        <Text style={styles.title}>Create Post</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Write a Name"
+          value={name}
+          onChangeText={setName}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Review about Locations"
+          value={locationReview}
+          onChangeText={setLocationReview}
+        />
+        <GooglePlacesAutocomplete
+          placeholder="Search Location"
+          minLength={2}
+          autoFocus={false}
+          returnKeyType={"default"}
+          fetchDetails={true}
+          onPress={handlePressLocation}
+          query={{
+            key: "AIzaSyDXoHO79vxypTv8xL4V10cf5kFpIYDO9Rk",
+            language: "en",
+          }}
+          styles={{
+            container: {
+              flex: 0,
+            },
+            textInputContainer: {
+              backgroundColor: "rgba(0,0,0,0)",
+              borderTopWidth: 0,
+              borderBottomWidth: 0,
+              paddingHorizontal: 34,
+              marginTop: 20,
+            },
+            textInput: {
+              marginLeft: 0,
+              marginRight: 0,
+              height: 38,
+              color: "#5d5d5d",
+              fontSize: 16,
+            },
+            predefinedPlacesDescription: {
+              color: "#1faadb",
+            },
+          }}
+        />
+        <AirbnbRating
+          type="custom"
+          ratingCount={5}
+          imageSize={wp("10%")}
+          onFinishRating={(rating) => console.log("Rating: ", rating)}
+          style={{ paddingVertical: hp("2%") }}
+        />
 
-      {image && <Image source={{ uri: image }} style={styles.image} />}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleLaunchImageLibrary}
-        >
-          <Text style={styles.buttonText}>Choose Image</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handleLaunchCamera}>
-          <Text style={styles.buttonText}>Take Picture</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
-          <Text style={styles.buttonText}>Upload</Text>
-        </TouchableOpacity>
+        {image && <Image source={{ uri: image }} style={styles.image} />}
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleLaunchImageLibrary}
+          >
+            <Text style={styles.buttonText}>Choose Image</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleLaunchCamera}>
+            <Text style={styles.buttonText}>Take Picture</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
+            <Text style={styles.buttonText}>Upload</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </Layout>
   );

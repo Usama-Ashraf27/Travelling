@@ -8,7 +8,7 @@ const Home = () => {
   return (
     <Layout>
       <Header />
-      <Text style={styles.name}>World Best Turist Places</Text>
+      <Text style={styles.name}>World Best Tourist Places</Text>
       <ProductsCard />
     </Layout>
   );
