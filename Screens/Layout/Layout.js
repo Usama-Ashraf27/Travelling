@@ -1,4 +1,4 @@
-import { View, Text, StatusBar, StyleSheet } from "react-native";
+import { View, Text, StatusBar, StyleSheet, SafeAreaView } from "react-native";
 import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
@@ -6,17 +6,22 @@ import Footer from "./Footer";
 const Layout = ({ children }) => {
   return (
     <>
-      <StatusBar />
+      <SafeAreaView style={styles.flexcontainer}>
+        <StatusBar />
 
-      <View>{children}</View>
-      <View style={styles.footer}>
-        <Footer />
-      </View>
+        <View>{children}</View>
+        <View style={styles.footer}>
+          <Footer />
+        </View>
+      </SafeAreaView>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  flexcontainer: {
+    flex: 1,
+  },
   footer: {
     display: "flex",
     width: "100%",

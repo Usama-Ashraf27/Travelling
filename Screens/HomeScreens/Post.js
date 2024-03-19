@@ -6,6 +6,8 @@ import {
   View,
   Image,
   TouchableOpacity,
+  SafeAreaView,
+  Platform,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import Layout from "../Layout/Layout";
@@ -16,6 +18,7 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import imageplace from "../../assets/imageplace.jpg";
+import { KeyboardAvoidingView } from "react-native";
 
 const Post = () => {
   const [name, setName] = useState("");
@@ -74,7 +77,9 @@ const Post = () => {
 
   return (
     <Layout style={styles.container}>
-      <View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
         <Text style={styles.title}>Create Post</Text>
         <TextInput
           style={styles.input}
@@ -148,7 +153,7 @@ const Post = () => {
             <Text style={styles.buttonText}>Upload</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Layout>
   );
 };

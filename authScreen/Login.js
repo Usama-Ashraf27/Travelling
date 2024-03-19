@@ -6,6 +6,9 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  KeyboardAvoidingView,
+  SafeAreaView,
+  Platform,
 } from "react-native";
 import {
   heightPercentageToDP as hp,
@@ -49,75 +52,82 @@ const LoginScreen = ({ navigation }) => {
     navigation.navigate("Register");
   };
   return (
-    <View style={styles.container}>
-      <Image source={loginImage} style={styles.image} />
-      <Text style={styles.title}>Welcome Back!</Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={[styles.input, styles.shadow, setBorderColor]}
-          placeholder="info@testemail.com"
-          value={data?.email}
-          onChangeText={(text) => onChangeText("email", text)}
-        />
-        {data?.email?.length && isValidEmail ? (
-          <Icon
-            name="check-circle"
-            size={20}
-            color="black"
-            style={styles.icon}
-          />
-        ) : null}
-      </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={[styles.input, styles.shadow]}
-          placeholder="Enter your Password"
-          secureTextEntry={!showPassword}
-          value={data.password}
-          onChangeText={(text) => onChangeText("password", text)}
-        />
-        <TouchableOpacity
-          style={styles.eyeButton}
-          onPress={togglePasswordVisibility}
-        >
-          {showPassword ? (
-            <Icon
-              name="eye"
-              size={wp("5%")}
-              color="black"
-              style={styles.icon}
-            />
-          ) : (
-            <Icon
-              name="eye-slash"
-              size={wp("5%")}
-              color="black"
-              style={styles.icon}
-            />
-          )}
-        </TouchableOpacity>
-      </View>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => {
-          navigation.navigate("Home");
-        }}
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
       >
-        <Text style={styles.buttonText}>Log In</Text>
-      </TouchableOpacity>
-      <Text style={{ alignSelf: "center" }}>
-        {" \n"}Don't have an account? {""}
-        <Text style={{ fontWeight: "bold" }} onPress={handleSignUpClick}>
-          Sign up
-        </Text>
-      </Text>
-      {/* {emailErrorText ? (
+        <View style={styles.container}>
+          <Image source={loginImage} style={styles.image} />
+          <Text style={styles.title}>Welcome Back!</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={[styles.input, styles.shadow, setBorderColor]}
+              placeholder="info@testemail.com"
+              value={data?.email}
+              onChangeText={(text) => onChangeText("email", text)}
+            />
+            {data?.email?.length && isValidEmail ? (
+              <Icon
+                name="check-circle"
+                size={20}
+                color="black"
+                style={styles.icon}
+              />
+            ) : null}
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={[styles.input, styles.shadow]}
+              placeholder="Enter your Password"
+              secureTextEntry={!showPassword}
+              value={data.password}
+              onChangeText={(text) => onChangeText("password", text)}
+            />
+            <TouchableOpacity
+              style={styles.eyeButton}
+              onPress={togglePasswordVisibility}
+            >
+              {showPassword ? (
+                <Icon
+                  name="eye"
+                  size={wp("5%")}
+                  color="black"
+                  style={styles.icon}
+                />
+              ) : (
+                <Icon
+                  name="eye-slash"
+                  size={wp("5%")}
+                  color="black"
+                  style={styles.icon}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              navigation.navigate("Home");
+            }}
+          >
+            <Text style={styles.buttonText}>Log In</Text>
+          </TouchableOpacity>
+          <Text style={{ alignSelf: "center" }}>
+            {" \n"}Don't have an account? {""}
+            <Text style={{ fontWeight: "bold" }} onPress={handleSignUpClick}>
+              Sign up
+            </Text>
+          </Text>
+          {/* {emailErrorText ? (
         <Text style={styles.emailError(data?.email && !isValidEmail)}>
           {emailErrorText}
         </Text>
       ) : null} */}
-      <View />
-    </View>
+          <View />
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 

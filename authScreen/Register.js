@@ -6,6 +6,9 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import loginImage from "../assets/login.jpg";
 import {
@@ -64,81 +67,87 @@ const Register = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Image source={loginImage} style={styles.image} />
-      <Text style={styles.title}>Sign Up</Text>
-      <View style={[styles.inputContainer, styles.shadow]}>
-        <TextInput
-          style={styles.input}
-          placeholder="Full Name"
-          value={formData.fullName}
-          onChangeText={(text) => handleChange("fullName", text)}
-        />
-      </View>
-      <View style={[styles.inputContainer, styles.shadow]}>
-        <TextInput
-          style={[styles.input, setBorderColor]}
-          placeholder="info@testemail.com"
-          value={formData?.email}
-          onChangeText={(text) => onChangeText("email", text)}
-        />
-        {formData?.email?.length && isValidEmail ? (
-          <Icon
-            name="check-circle"
-            size={20}
-            color="black"
-            style={{ right: 8 }}
-          />
-        ) : null}
-      </View>
-      <View style={[styles.inputContainer, styles.shadow]}>
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          value={formData.password}
-          onChangeText={(text) => handleChange("password", text)}
-          secureTextEntry={!showPassword}
-        />
-        <TouchableOpacity
-          style={styles.eyeButton}
-          onPress={togglePasswordVisibility}
-        >
-          <Icon
-            name={showPassword ? "eye" : "eye-slash"}
-            size={wp("5%")}
-            color="black"
-          />
-        </TouchableOpacity>
-      </View>
-      <View style={[styles.inputContainer, styles.shadow]}>
-        <TextInput
-          style={styles.input}
-          placeholder="Confirm Password"
-          value={formData.confirmPassword}
-          onChangeText={(text) => handleChange("confirmPassword", text)}
-          secureTextEntry={!showConfirmPassword}
-        />
-        <TouchableOpacity
-          style={styles.eyeButton}
-          onPress={toggleConfirmPasswordVisibility}
-        >
-          <Icon
-            name={showConfirmPassword ? "eye" : "eye-slash"}
-            size={wp("5%")}
-            color="black"
-          />
-        </TouchableOpacity>
-      </View>
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Submit</Text>
-      </TouchableOpacity>
-      <View style={styles.login}>
-        <Text>Already have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate("login")}>
-          <Text style={styles.loginText}>Login here</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <View style={styles.container}>
+          <Image source={loginImage} style={styles.image} />
+          <Text style={styles.title}>Sign Up</Text>
+          <View style={[styles.inputContainer, styles.shadow]}>
+            <TextInput
+              style={styles.input}
+              placeholder="Full Name"
+              value={formData.fullName}
+              onChangeText={(text) => handleChange("fullName", text)}
+            />
+          </View>
+          <View style={[styles.inputContainer, styles.shadow]}>
+            <TextInput
+              style={[styles.input, setBorderColor]}
+              placeholder="info@testemail.com"
+              value={formData?.email}
+              onChangeText={(text) => onChangeText("email", text)}
+            />
+            {formData?.email?.length && isValidEmail ? (
+              <Icon
+                name="check-circle"
+                size={20}
+                color="black"
+                style={{ right: 8 }}
+              />
+            ) : null}
+          </View>
+          <View style={[styles.inputContainer, styles.shadow]}>
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              value={formData.password}
+              onChangeText={(text) => handleChange("password", text)}
+              secureTextEntry={!showPassword}
+            />
+            <TouchableOpacity
+              style={styles.eyeButton}
+              onPress={togglePasswordVisibility}
+            >
+              <Icon
+                name={showPassword ? "eye" : "eye-slash"}
+                size={wp("5%")}
+                color="black"
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={[styles.inputContainer, styles.shadow]}>
+            <TextInput
+              style={styles.input}
+              placeholder="Confirm Password"
+              value={formData.confirmPassword}
+              onChangeText={(text) => handleChange("confirmPassword", text)}
+              secureTextEntry={!showConfirmPassword}
+            />
+            <TouchableOpacity
+              style={styles.eyeButton}
+              onPress={toggleConfirmPasswordVisibility}
+            >
+              <Icon
+                name={showConfirmPassword ? "eye" : "eye-slash"}
+                size={wp("5%")}
+                color="black"
+              />
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            <Text style={styles.buttonText}>Submit</Text>
+          </TouchableOpacity>
+          <View style={styles.login}>
+            <Text>Already have an account? </Text>
+            <TouchableOpacity onPress={() => navigation.navigate("login")}>
+              <Text style={styles.loginText}>Login here</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 

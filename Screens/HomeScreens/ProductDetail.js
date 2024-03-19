@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { Rating } from "react-native-ratings";
@@ -26,37 +27,39 @@ const ProductDetail = ({ route }) => {
 
   return (
     <>
-      <View style={styles.productInfo}>
-        <Image
-          source={{ uri: product.image }}
-          style={styles.image}
-          resizeMode="contain"
-        />
-        <Text style={styles.name}>{product.name}</Text>
-        <Text style={styles.review}>{product.reviewAboutLocation}</Text>
-        <Text style={styles.location}>{product.locationname}</Text>
-        <Rating
-          type="star"
-          startingValue={product.rating}
-          imageSize={24}
-          style={{ marginTop: hp("2%") }}
-          readonly
-        />
-        <View style={styles.commentSection}>
-          <TextInput
-            style={styles.input}
-            placeholder="Add your comment"
-            onChangeText={(text) => setComment(text)}
+      <SafeAreaView>
+        <View style={styles.productInfo}>
+          <Image
+            source={{ uri: product.image }}
+            style={styles.image}
+            resizeMode="contain"
           />
-          <TouchableOpacity
-            style={styles.commentButton}
-            onPress={handleComment}
-          >
-            <Icon name="comment" size={20} color="#fff" />
-          </TouchableOpacity>
+          <Text style={styles.name}>{product.name}</Text>
+          <Text style={styles.review}>{product.reviewAboutLocation}</Text>
+          <Text style={styles.location}>{product.locationname}</Text>
+          <Rating
+            type="star"
+            startingValue={product.rating}
+            imageSize={24}
+            style={{ marginTop: hp("2%") }}
+            readonly
+          />
+          <View style={styles.commentSection}>
+            <TextInput
+              style={styles.input}
+              placeholder="Add your comment"
+              onChangeText={(text) => setComment(text)}
+            />
+            <TouchableOpacity
+              style={styles.commentButton}
+              onPress={handleComment}
+            >
+              <Icon name="comment" size={20} color="#fff" />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-      <Comments />
+        <Comments />
+      </SafeAreaView>
     </>
   );
 };
@@ -64,12 +67,11 @@ const ProductDetail = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "white",
   },
   productInfo: {
     paddingHorizontal: wp("3.5%"),
     backgroundColor: "white",
-    height: "65%",
+    height: "60%",
   },
   image: {
     height: hp("33%"),

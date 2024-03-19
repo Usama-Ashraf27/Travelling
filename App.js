@@ -8,6 +8,7 @@ import Home from "./Screens/HomeScreens/Home";
 import Post from "./Screens/HomeScreens/Post";
 import Account from "./Screens/HomeScreens/Account";
 import ProductDetail from "./Screens/HomeScreens/ProductDetail";
+import SplashScreen from "./Screens/SplashScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -15,9 +16,10 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="login"
+        initialRouteName="SplashScreen"
         screenOptions={{ headerShown: false }}
       >
+        <Stack.Screen name="SplashScreen" component={SplashScreen} />
         <Stack.Screen name="login" component={LoginScreen} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="layout" component={Layout} />
