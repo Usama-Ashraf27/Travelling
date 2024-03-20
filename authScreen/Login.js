@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -16,11 +16,18 @@ import {
 } from "react-native-responsive-screen";
 import loginImage from "../assets/login.jpg";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { server } from "../redux/store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen = ({ navigation }) => {
-  const [data, setData] = useState({ email: "", password: "" });
+  const [data, setData] = useState({
+    email: "usama@gmail.com",
+    password: "112233",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [isValidEmail, setIsValidEmail] = useState(true);
+
+  useEffect(() => {});
 
   const isValidEmailFormat = (email) => {
     return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(email);
@@ -51,6 +58,45 @@ const LoginScreen = ({ navigation }) => {
   const handleSignUpClick = () => {
     navigation.navigate("Register");
   };
+
+  const handlelogin = async () => {
+    // Check if email and password are provided
+    if (!data.email || !data.password) {
+      alert("Please enter both email and password.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${server}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: data.email, password: data.password }),
+      });
+      console.log(response);
+      // Log all response details
+      // console.log("Response status:", response.status);
+      // console.log("Response headers:", response.headers);
+      const responseData = await response.json();
+
+      await AsyncStorage.setItem("user", JSON.stringify(responseData.data));
+
+      console.log("Response data:", responseData);
+
+      if (response.ok) {
+        // Login successful, navigate to the home screen or dashboard
+        // Replace 'Home' with the name of your destination screen
+        navigation.navigate("Home");
+      } else {
+        throw new Error(responseData.message || "Login failed.");
+      }
+    } catch (error) {
+      console.error("Error logging in:", error.message);
+      alert("An error occurred while logging in. Please try again later.");
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
@@ -105,12 +151,7 @@ const LoginScreen = ({ navigation }) => {
               )}
             </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              navigation.navigate("Home");
-            }}
-          >
+          <TouchableOpacity style={styles.button} onPress={handlelogin}>
             <Text style={styles.buttonText}>Log In</Text>
           </TouchableOpacity>
           <Text style={{ alignSelf: "center" }}>

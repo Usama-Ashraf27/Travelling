@@ -9,7 +9,7 @@ const Home = () => {
     <Layout>
       <Header />
       <Text style={styles.name}>World Best Tourist Places</Text>
-      <ProductsCard />
+      {/* <ProductsCard /> */}
     </Layout>
   );
 };

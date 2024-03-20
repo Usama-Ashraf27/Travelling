@@ -16,13 +16,14 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { server } from "../redux/store";
 
 const Register = ({ navigation }) => {
   const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+    fullName: "Usa",
+    email: "usama@gmail.com",
+    password: "112233",
+    confirmPassword: "112233",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -62,8 +63,40 @@ const Register = ({ navigation }) => {
     setFormData({ ...formData, [key]: value });
   };
 
-  const handleSubmit = () => {
-    navigation.navigate("");
+  const handleSubmit = async () => {
+    // Create a new object with only the required fields
+    const requestData = {
+      name: formData.fullName,
+      email: formData.email,
+      password: formData.password,
+    };
+
+    // Check if passwords match
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${server}/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      });
+      console.log(JSON.stringify(requestData));
+      console.log(JSON.stringify(response));
+      if (!response.ok) {
+        throw new Error("Registration failed.");
+      }
+
+      // Registration successful, navigate to login screen
+      navigation.navigate("login");
+    } catch (error) {
+      console.error("Error registering:", error.message);
+      alert("An error occurred. Please try again later.");
+    }
   };
 
   return (

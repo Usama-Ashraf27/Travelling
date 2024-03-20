@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -19,25 +19,43 @@ import {
 } from "react-native-responsive-screen";
 import imageplace from "../../assets/imageplace.jpg";
 import { KeyboardAvoidingView } from "react-native";
+import { server } from "../../redux/store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Post = () => {
-  const [name, setName] = useState("");
-  const [locationReview, setLocationReview] = useState("");
-  const [image, setImage] = useState(
-    `https://i0.wp.com/thinkfirstcommunication.com/wp-content/uploads/2022/05/placeholder-1-1.png?w=1200&ssl=1`
-  );
+  const [name, setName] = useState("Italy");
+  const [comments, setcomments] = useState("Good");
+  const [rating, setRating] = useState(0);
+  const [image, setImage] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [user, setuser] = useState();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await AsyncStorage.getItem("user");
+        if (userData) {
+          setuser(JSON.parse(userData));
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleLaunchImageLibrary = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
+      allowsMultipleSelection: true,
       aspect: [4, 3],
       quality: 1,
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      const selectedImages = result.assets.map((asset) => asset.uri);
+      setImage(selectedImages);
     }
   };
 
@@ -69,12 +87,56 @@ const Post = () => {
     }
   };
 
-  const handleUpload = () => {
-    setTimeout(() => {
-      alert("Upload complete!");
-    }, 2000);
-  };
+  const handleUpload = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append(
+        "comments",
+        JSON.stringify([{ user: user._id, comment: comments }])
+      );
+      formData.append("latitude", selectedLocation?.latitude.toString() ?? "");
+      formData.append(
+        "longitude",
+        selectedLocation?.longitude.toString() ?? ""
+      );
+      formData.append(
+        "ratings",
+        JSON.stringify([{ user: user._id, rating: rating }])
+      );
+      // console.log(image, "img");)
+      image.forEach((img, index) =>
+        formData.append("pictures", {
+          uri: img,
+          name: `file${index}.jpg`,
+          type: "image/jpeg",
+        })
+      );
 
+      // console.log(image, "images");
+      console.log("FormData:", formData);
+
+      const response = await fetch(`${server}/landmarks`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Response:", data);
+
+      alert("Upload successful!");
+    } catch (error) {
+      console.error("Error uploading:", error.message);
+      alert("An error occurred while uploading. Please try again later.");
+    }
+  };
   return (
     <Layout style={styles.container}>
       <KeyboardAvoidingView
@@ -90,8 +152,8 @@ const Post = () => {
         <TextInput
           style={styles.input}
           placeholder="Review about Locations"
-          value={locationReview}
-          onChangeText={setLocationReview}
+          value={comments}
+          onChangeText={setcomments}
         />
         <GooglePlacesAutocomplete
           placeholder="Search Location"
@@ -130,12 +192,13 @@ const Post = () => {
         <AirbnbRating
           type="custom"
           ratingCount={5}
+          defaultRating={rating}
           imageSize={wp("10%")}
-          onFinishRating={(rating) => console.log("Rating: ", rating)}
+          onFinishRating={(rating) => setRating(rating)}
           style={{ paddingVertical: hp("2%") }}
         />
 
-        {image && <Image source={{ uri: image }} style={styles.image} />}
+        {/* {image && <Image source={{ uri: image }} style={styles.image} />} */}
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity
