@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   StyleSheet,
   Text,
@@ -7,50 +7,39 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
+import { productData } from "./ProductsData";
 import { useNavigation } from "@react-navigation/native";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { Rating } from "react-native-ratings";
-import { server } from "../../redux/store";
 
 const ProductsCard = () => {
   const navigation = useNavigation();
-  const [productData, setProductData] = useState([]);
-
-  useEffect(() => {
-    fetch(`${server}/landmarks`)
-      .then((response) => response.json())
-      .then((data) => {
-        const stringifiedData = JSON.stringify(data);
-        console.log("Fetched Data:", stringifiedData);
-        setProductData(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }, []);
-
-  const handleProductPress = (productId) => {
-    navigation.navigate("ProductDetail", { productId });
-    console.log(productId);
-  };
-
+  // useEffect(() => {
+  //   fetch(`${server}/landmarks`)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       console.log("Fetched Data:", data);
+  //       setProductData(data); // Update state with fetched data
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching data:", error);
+  //     });
+  // }, []);
   const renderProductItem = ({ item }) => (
     <TouchableOpacity
       style={styles.productItem}
-      onPress={() => handleProductPress(item._id)}
+      onPress={() => navigation.navigate("ProductDetail", { product: item })}
     >
-      <Image source={{ uri: item.pictures[0].url }} style={styles.image} />
+      <Image source={{ uri: item.image }} style={styles.image} />
       <Text style={styles.name}>{item.name}</Text>
-
-      <Text style={styles.commentText}>
-        {item.comments.length > 0 ? item.comments[0].comment : "No comments"}
-      </Text>
+      <Text numberOfLines={1}>{item.reviewAboutLocation}</Text>
+      <Text numberOfLines={1}>{item.locationname}</Text>
       <Rating
         type="star"
-        startingValue={item.averageRating}
+        startingValue={item.rating}
         imageSize={20}
         style={{ marginTop: 10 }}
         readonly
@@ -78,14 +67,6 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 8,
-  },
-  ratingText: {
-    fontSize: 16,
-    marginBottom: 4,
-  },
-  commentText: {
-    fontSize: 16,
     marginBottom: 8,
   },
   productItem: {
