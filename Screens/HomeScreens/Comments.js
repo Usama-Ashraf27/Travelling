@@ -6,18 +6,32 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 
-const Comments = () => {
+const Comments = ({ comments }) => {
+  console.log(comments, "");
+  // useEffect(() => {
+  //   fetch(`${server}/landmarks/${productId}/comments`)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       console.log("Fetched Data:", data);
+  //       setComments(data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching data:", error);
+  //     });
+  // }, [productId]);
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={styles.container}>
-        {commentData.map((comment) => (
-          <View key={comment.id} style={styles.commentContainer}>
+        {comments.map((comment) => (
+          <View key={comment._id} style={styles.commentContainer}>
             <Image
-              source={{ uri: comment.user.userphoto }}
+              source={{
+                uri: "https://cdn-icons-png.flaticon.com/512/149/149071.png ",
+              }}
               style={styles.userPhoto}
             />
             <View style={styles.commentContent}>
-              <Text style={styles.username}>{comment.user.username}</Text>
+              {/* <Text style={styles.username}>{comment.user}</Text> */}
               <Text style={styles.commentText}>{comment.comment}</Text>
             </View>
           </View>
