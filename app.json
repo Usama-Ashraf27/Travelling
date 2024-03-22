@@ -12,7 +12,10 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "permissions": {
+        "camera": "Allow $(Travelling) to access your camera"
+      }
     },
     "android": {
       "adaptiveIcon": {

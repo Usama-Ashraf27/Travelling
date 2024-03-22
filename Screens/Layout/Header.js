@@ -7,30 +7,76 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { useNavigation } from "@react-navigation/native";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+
 const Header = () => {
+  const navigation = useNavigation();
   const [searchText, setSearchText] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const handlePressLocation = (data, details = null) => {
+    console.log(
+      data.description,
+      details.geometry.location.lat,
+      details.geometry.location.lng
+    );
+
+    if (details) {
+      setSelectedLocation({
+        name: data.description,
+        latitude: details.geometry.location.lat,
+        longitude: details.geometry.location.lng,
+      });
+    }
+    navigation.navigate("Search", { selectedLocation });
+  };
   //funciotn for search
   const handleSearch = () => {
     console.log(searchText);
-    setSearchText("");
+    // setSearchText("");
   };
   return (
     <View
       style={{
         height: 90,
+        zIndex: 1,
         backgroundColor: `lightgray`,
       }}
     >
-      <View style={styles.container}>
-        <TextInput
-          style={styles.inputBox}
-          value={searchText}
-          onChangeText={(text) => setSearchText(text)}
-        />
-        <TouchableOpacity style={styles.searchBtn} onPress={handleSearch}>
-          <FontAwesome name="search" style={styles.icon} />
-        </TouchableOpacity>
-      </View>
+      <GooglePlacesAutocomplete
+        placeholder="Search Location"
+        minLength={2}
+        autoFocus={false}
+        returnKeyType={"default"}
+        fetchDetails={true}
+        onPress={handlePressLocation}
+        query={{
+          key: "AIzaSyDXoHO79vxypTv8xL4V10cf5kFpIYDO9Rk",
+          language: "en",
+        }}
+        styles={{
+          container: {
+            flex: 0,
+          },
+          textInputContainer: {
+            backgroundColor: "rgba(0,0,0,0)",
+            borderTopWidth: 0,
+            borderBottomWidth: 0,
+            paddingHorizontal: 34,
+            marginTop: 20,
+          },
+          textInput: {
+            marginLeft: 0,
+            marginRight: 0,
+            height: 38,
+            color: "#5d5d5d",
+            fontSize: 16,
+          },
+          predefinedPlacesDescription: {
+            color: "#1faadb",
+          },
+        }}
+      />
     </View>
   );
 };

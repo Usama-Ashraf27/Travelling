@@ -29,13 +29,17 @@ const Post = () => {
   const [image, setImage] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [user, setuser] = useState();
+  const [token, setToken] = useState("");
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const userData = await AsyncStorage.getItem("user");
+        console.log(userData);
         if (userData) {
-          setuser(JSON.parse(userData));
+          const parsedUser = JSON.parse(userData);
+          setuser(parsedUser);
+          setToken(parsedUser.token);
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -62,13 +66,14 @@ const Post = () => {
   const handleLaunchCamera = async () => {
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
+      allowsMultipleSelection: true,
       aspect: [4, 3],
       quality: 1,
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      const selectedImages = result.assets.map((asset) => asset.uri);
+      setImage(selectedImages);
     }
   };
 
@@ -120,6 +125,7 @@ const Post = () => {
         method: "POST",
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
         body: formData,
       });

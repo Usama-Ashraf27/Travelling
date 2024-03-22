@@ -9,16 +9,14 @@ import Post from "./Screens/HomeScreens/Post";
 import Account from "./Screens/HomeScreens/Account";
 import ProductDetail from "./Screens/HomeScreens/ProductDetail";
 import SplashScreen from "./Screens/SplashScreen";
+import Search from "./Screens/HomeScreens/Search";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="SplashScreen"
-        screenOptions={{ headerShown: false }}
-      >
+      <Stack.Navigator initialRouteName="SplashScreen">
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
         <Stack.Screen name="login" component={LoginScreen} />
         <Stack.Screen name="Register" component={Register} />
@@ -27,6 +25,7 @@ export default function App() {
         <Stack.Screen name="Post" component={Post} />
         <Stack.Screen name="Account" component={Account} />
         <Stack.Screen name="ProductDetail" component={ProductDetail} />
+        <Stack.Screen name="Search" component={Search} />
       </Stack.Navigator>
     </NavigationContainer>
   );

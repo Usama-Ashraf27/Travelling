@@ -9,6 +9,8 @@ import {
   SafeAreaView,
   Modal,
   Pressable,
+  Platform,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Rating } from "react-native-ratings";
 import { server } from "../../redux/store";
@@ -21,22 +23,40 @@ const ProductDetail = ({ route }) => {
   const [comment, setComment] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [rating, setRating] = useState(0);
+  const [token, setToken] = useState("");
+  const [postcomment, setpostcomment] = useState([]);
 
   useEffect(() => {
-    fetch(`${server}/landmarks/${productId}`)
-      .then((response) => response.json())
-      .then((data) => {
+    const fetchLandmarkDetails = async () => {
+      try {
+        const userData = await AsyncStorage.getItem("user");
+        const parsedUser = JSON.parse(userData);
+        const token = parsedUser.token;
+        setToken(token);
+        const response = await fetch(`${server}/landmarks/${productId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
         console.log("Fetched Data:", data);
         setProduct(data);
-      })
-      .catch((error) => {
+        setpostcomment(data.comments);
+      } catch (error) {
         console.error("Error fetching data:", error);
-      });
-  }, []);
+      }
+    };
+
+    fetchLandmarkDetails();
+  }, [productId]);
 
   const handleComment = async () => {
     try {
-      // Fetch user ID from async store
       const userData = await AsyncStorage.getItem("user");
       const id = JSON.parse(userData)._id;
 
@@ -46,6 +66,7 @@ const ProductDetail = ({ route }) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Include the token in the headers
           },
           body: JSON.stringify({
             user: id,
@@ -60,6 +81,7 @@ const ProductDetail = ({ route }) => {
 
       const data = await response.json();
       console.log("Comment response:", data);
+      updateComments(data.comments);
     } catch (error) {
       console.error("Error posting comment:", error);
     }
@@ -67,7 +89,6 @@ const ProductDetail = ({ route }) => {
 
   const handleAddRating = async () => {
     try {
-      // Fetch user ID from async store
       const userData = await AsyncStorage.getItem("user");
       const id = JSON.parse(userData)._id;
 
@@ -75,6 +96,7 @@ const ProductDetail = ({ route }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Include the token in the headers
         },
         body: JSON.stringify({
           user: id,
@@ -102,81 +124,97 @@ const ProductDetail = ({ route }) => {
       </View>
     );
   }
+  const updateComments = (data) => {
+    setpostcomment(data);
+  };
 
   return (
     <SafeAreaView>
-      <View style={styles.productInfo}>
-        <Image source={{ uri: product.pictures[0].url }} style={styles.image} />
-        <Text style={styles.name}>{product.name}</Text>
-        <View style={styles.row}>
-          <Rating
-            type="star"
-            startingValue={product.averageRating}
-            imageSize={24}
-            style={{ marginTop: 10 }}
-            readonly
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : null}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+        style={styles.container}
+      >
+        <View style={styles.productInfo}>
+          <Image
+            source={{ uri: product.pictures[0].url }}
+            style={styles.image}
           />
-          <TouchableOpacity
-            style={styles.commentButton}
-            onPress={() => setModalVisible(true)}
-          >
-            <Text style={{ color: "#fff" }}>ADD Rating</Text>
-          </TouchableOpacity>
+          <Text style={styles.name}>{product.name}</Text>
+          <View style={styles.row}>
+            <Rating
+              type="star"
+              startingValue={product.averageRating}
+              imageSize={24}
+              style={{ marginTop: 10 }}
+              readonly
+            />
+            <TouchableOpacity
+              style={styles.commentButton}
+              onPress={() => setModalVisible(true)}
+            >
+              <Text style={{ color: "#fff" }}>ADD Rating</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.commentSection}>
+            <TextInput
+              style={styles.input}
+              placeholder="Add your comment"
+              onChangeText={(text) => setComment(text)}
+            />
+            <TouchableOpacity
+              style={styles.commentButton}
+              onPress={handleComment}
+            >
+              <Text style={{ color: "#fff" }}>Submit</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.commentSection}>
-          <TextInput
-            style={styles.input}
-            placeholder="Add your comment"
-            onChangeText={(text) => setComment(text)}
-          />
-          <TouchableOpacity
-            style={styles.commentButton}
-            onPress={handleComment}
-          >
-            <Text style={{ color: "#fff" }}>Submit</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
 
-      <View style={styles.centeredView}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible);
-          }}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>Add Rating</Text>
-              <Rating
-                showRating
-                type="star"
-                fractions={1}
-                startingValue={rating}
-                imageSize={40}
-                onFinishRating={(value) => setRating(value)}
-              />
-              <View style={styles.row}>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={handleAddRating}
-                >
-                  <Text style={styles.textStyle}>Submit Rating</Text>
-                </Pressable>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => setModalVisible(!modalVisible)}
-                >
-                  <Text style={styles.textStyle}>Cancel</Text>
-                </Pressable>
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>Add Rating</Text>
+                <Rating
+                  showRating
+                  type="star"
+                  fractions={1}
+                  startingValue={rating}
+                  imageSize={40}
+                  onFinishRating={(value) => setRating(value)}
+                />
+                <View style={styles.row}>
+                  <Pressable
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={handleAddRating}
+                  >
+                    <Text style={styles.textStyle}>Submit Rating</Text>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={() => setModalVisible(!modalVisible)}
+                  >
+                    <Text style={styles.textStyle}>Cancel</Text>
+                  </Pressable>
+                </View>
               </View>
             </View>
-          </View>
-        </Modal>
-      </View>
-      <Comments comments={product.comments} productId={productId} />
+          </Modal>
+        </View>
+        <Comments
+          comments={postcomment}
+          update={updateComments}
+          productId={productId}
+        />
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

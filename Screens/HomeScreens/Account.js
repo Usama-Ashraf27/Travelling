@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, Image, TextInput } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import Layout from "../Layout/Layout";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
@@ -7,7 +14,7 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 
-const Account = () => {
+const Account = ({ navigation }) => {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
@@ -24,6 +31,15 @@ const Account = () => {
 
     fetchUserData();
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem("user");
+      navigation.navigate("login");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   if (!userData) {
     return (
@@ -60,6 +76,17 @@ const Account = () => {
             editable={false}
           />
         </View>
+        <View style={styles.buttonRow}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("UpdateProfile")}
+          >
+            <Text style={styles.buttonText}>Update</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleLogout}>
+            <Text style={styles.buttonText}>Logout</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </Layout>
   );
@@ -94,5 +121,21 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: wp("2%"),
     marginBottom: hp("1%"),
+  },
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    marginTop: hp("14%"),
+    paddingHorizontal: wp("10%"),
+  },
+  button: {
+    backgroundColor: "black",
+    paddingHorizontal: wp("10%"),
+    paddingVertical: hp("1%"),
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: wp("4%"),
   },
 });

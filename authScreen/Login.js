@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useContext } from "react";
 import {
   StyleSheet,
   Text,
@@ -18,12 +18,14 @@ import loginImage from "../assets/login.jpg";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { server } from "../redux/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+// import { AuthContext } from "../ContextApi/AuthContext";
 
 const LoginScreen = ({ navigation }) => {
   const [data, setData] = useState({
     email: "usama@gmail.com",
     password: "112233",
   });
+  // const { storeToken } = useContext(AuthContext);
   const [showPassword, setShowPassword] = useState(false);
   const [isValidEmail, setIsValidEmail] = useState(true);
 
@@ -74,23 +76,16 @@ const LoginScreen = ({ navigation }) => {
         },
         body: JSON.stringify({ email: data.email, password: data.password }),
       });
-      console.log(response);
+      // console.log(response);
       // Log all response details
       // console.log("Response status:", response.status);
       // console.log("Response headers:", response.headers);
       const responseData = await response.json();
 
       await AsyncStorage.setItem("user", JSON.stringify(responseData.data));
-
+      navigation.navigate("Home");
+      // storeToken(responseData.data.token);
       console.log("Response data:", responseData);
-
-      if (response.ok) {
-        // Login successful, navigate to the home screen or dashboard
-        // Replace 'Home' with the name of your destination screen
-        navigation.navigate("Home");
-      } else {
-        throw new Error(responseData.message || "Login failed.");
-      }
     } catch (error) {
       console.error("Error logging in:", error.message);
       alert("An error occurred while logging in. Please try again later.");

@@ -14,22 +14,57 @@ import {
 } from "react-native-responsive-screen";
 import { Rating } from "react-native-ratings";
 import { server } from "../../redux/store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ProductsCard = () => {
   const navigation = useNavigation();
   const [productData, setProductData] = useState([]);
+  const [user, setuser] = useState();
+  const [token, setToken] = useState("");
 
   useEffect(() => {
-    fetch(`${server}/landmarks`)
-      .then((response) => response.json())
+    const fetchUser = async () => {
+      try {
+        const userData = await AsyncStorage.getItem("user");
+        console.log(userData);
+        if (userData) {
+          const parsedUser = JSON.parse(userData);
+          setuser(parsedUser);
+          setToken(parsedUser.token);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
+    fetch(`${server}/landmarks`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        // Check content type to ensure it's JSON
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error("Response is not in JSON format");
+        }
+        return response.json();
+      })
       .then((data) => {
-        console.log("Fetched Data:", JSON.stringify(data));
+        console.log("Fetched Data:", data);
         setProductData(data);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
-  }, []);
+  }, [token]);
 
   const renderProductItem = ({ item }) => (
     <TouchableOpacity
